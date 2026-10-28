@@ -1,8 +1,8 @@
 # Bitcoin Node Dashboard
 
 Dark, live dashboard for a self-hosted Bitcoin node and its related services. By
-default, Docker Compose serves it at `http://192.168.88.44:3003` on the configured
-LAN address; change the published address in `docker-compose.yml` for another host.
+default, Docker Compose binds it to `127.0.0.1:3003` for local access. Configure
+the bind address and port in `.env` to allow access from other devices.
 
 ## Live data
 
@@ -60,8 +60,8 @@ unlock, without changing the dashboard or storing the wallet password.
 
 JoinMarket shows live maker/CoinJoin state and advertised market offers/bond
 totals. No wallet balances, UTXOs, private history or privacy score are displayed.
-Jam web authentication comes from `../joinmarket/.env`, mounted read-only into
-the collector. Only fixed session and orderbook reads are made; only selected
+Jam web authentication comes from the configured JoinMarket environment file,
+mounted read-only into the collector. Only fixed session and orderbook reads are made; only selected
 booleans and counts reach the browser. RTL/Jam interface checks are separate from
 wallet/node readiness. Electrs monitoring includes allocated database size (daily), interval query rate,
 mean server-side processing time, per-method lifetime counters and a persisted
@@ -74,20 +74,27 @@ The database mount is read-only and size measurement does not follow symlinks.
 ## Run and maintain
 
 ```sh
-cd /home/dietpi/dashboard
+cp .env.template .env
+# Edit .env: set the host paths for your existing service configuration,
+# certificates, macaroon and electrs database.
 docker compose up -d --build
 ```
 
-This compose file expects the host's existing Bitcoin, JoinMarket, LND, electrs,
+`docker-compose.yml` is the deployment template. Its settings are populated from
+`.env`; `.env.template` documents each configurable value. The example service
+paths must be replaced with paths on your host. Keep `.env` private: it can
+contain paths to credentials, and is excluded from Git.
+
+The collector integrates with existing Bitcoin, JoinMarket, LND, electrs,
 mempool, Tor, BlitzPool and read-only Homepage Docker proxy services on the
-external `bitcoin` Docker network. It also expects the read-only credential and
-certificate files referenced by the compose mounts to exist. Electrs Prometheus
-metrics must be reachable at `electrs:4224` on that network. The dashboard does
-not create or manage those services.
+configured external Docker network. It expects the credential and certificate
+files referenced by `.env` to exist. Electrs Prometheus metrics must be reachable
+at `electrs:4224` on that network. The dashboard does not create or manage those
+services.
 
 Both services explicitly join the external `bitcoin` network. Bitcoin remains
 independently managed; no blockchain volumes, IPC settings or node builds change.
-The collector reads `../bitcoin/bitcoin.conf` read-only for existing RPC credentials.
+The collector reads the configured Bitcoin node file read-only for existing RPC credentials.
 It uses only fixed read-only RPC calls; no generic RPC or Docker proxy endpoint is
 exposed to the browser. Its only published API is the selected status snapshot.
 The Docker socket is not mounted into either dashboard container.
@@ -98,8 +105,8 @@ It reuses `homepage-dockerproxy:2375`; if Homepage's proxy is stopped, other dat
 sources continue and Docker metadata becomes unavailable. Start order is otherwise
 independent; missing upstream services recover on later polls.
 
-This is a LAN dashboard without a sign-in flow. Port 3003 binds only the host LAN
-address. Do not expose it publicly without adding access controls.
+This dashboard does not provide a sign-in flow. Keep its bind address on loopback
+or a trusted private network. Do not expose it publicly without adding access controls.
 
 Stack: React 19, TypeScript, Vite, Tailwind 4, shadcn-style Button, Radix Dialog,
 Lucide icons and Recharts; Python 3.13 collector; Nginx static frontend/API proxy.

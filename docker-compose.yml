@@ -3,7 +3,7 @@ services:
   dashboard:
     build: .
     ports:
-      - "192.168.88.44:3003:80"
+      - "${DASHBOARD_BIND_ADDRESS:-127.0.0.1}:${DASHBOARD_PORT:-3003}:80"
     restart: unless-stopped
     depends_on:
       - collector
@@ -12,7 +12,7 @@ services:
   collector:
     build: ./backend
     environment:
-      POLL_SECONDS: "60"
+      POLL_SECONDS: "${POLL_SECONDS:-60}"
     restart: unless-stopped
     read_only: true
     cap_drop:
@@ -20,12 +20,12 @@ services:
     security_opt:
       - no-new-privileges:true
     volumes:
-      - ../bitcoin/bitcoin.conf:/run/bitcoin.conf:ro
-      - ../joinmarket/.env:/run/jam.env:ro
-      - ../lnd/data/tls.cert:/run/lnd/tls.cert:ro
-      - ../lnd/data/dashboard.macaroon:/run/lnd/dashboard.macaroon:ro
-      - /data/electrs:/electrs-db:ro
-      - ./state:/state
+      - ${BITCOIN_CONFIG_PATH:?Set BITCOIN_CONFIG_PATH in .env}:/run/bitcoin.conf:ro
+      - ${JOINMARKET_ENV_PATH:?Set JOINMARKET_ENV_PATH in .env}:/run/jam.env:ro
+      - ${LND_TLS_CERT_PATH:?Set LND_TLS_CERT_PATH in .env}:/run/lnd/tls.cert:ro
+      - ${LND_DASHBOARD_MACAROON_PATH:?Set LND_DASHBOARD_MACAROON_PATH in .env}:/run/lnd/dashboard.macaroon:ro
+      - ${ELECTRS_DATA_PATH:?Set ELECTRS_DATA_PATH in .env}:/electrs-db:ro
+      - ${DASHBOARD_STATE_PATH:-./state}:/state
     networks:
       - bitcoin
     logging:
@@ -36,4 +36,4 @@ services:
 networks:
   bitcoin:
     external: true
-    name: bitcoin
+    name: ${BITCOIN_DOCKER_NETWORK:-bitcoin}
