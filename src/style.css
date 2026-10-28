@@ -1888,3 +1888,33 @@ main {
 .card:nth-child(5) .plot,.card:nth-child(6) .queries .plot,.card:nth-child(5) .empty-chart,.card:nth-child(6) .queries .empty-chart{flex:1;min-height:0;height:auto!important}
 @media(min-width:1151px) and (max-width:1450px){.fee-recommendations>div+div{padding-left:5px}.card:nth-child(6)>.index-stats .stat strong{font-size:13px}}
 .card:nth-child(6)>.stats:first-of-type .stat strong{font-size:18px}
+/* Match the lower row's 12px inset below the final content panel. */
+@media (min-width: 1151px) {
+  .card:nth-child(-n + 3) {
+    height: 310px;
+    display: flex;
+    flex-direction: column;
+  }
+}
+.card:nth-child(-n + 3) > header {
+  flex: 0 0 51px;
+}
+.card:nth-child(1) > .graph,
+.card:nth-child(2) > .lightning-channels,
+.card:nth-child(3) > .joinmarket-market {
+  flex: 1;
+  min-height: 0;
+}
+.card:nth-child(1) > .graph {
+  display: flex;
+  flex-direction: column;
+}
+.card:nth-child(1) > .graph .graph-title {
+  flex: 0 0 auto;
+}
+.card:nth-child(1) > .graph .plot,
+.card:nth-child(1) > .graph .empty-chart {
+  flex: 1;
+  min-height: 0;
+  height: auto;
+}
