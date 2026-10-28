@@ -1,7 +1,14 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
-export default defineConfig({
-  plugins: [react(), tailwindcss()],
-  server: { proxy: { "/api": "http://192.168.88.44:3003" } },
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, ".", "");
+  return {
+    plugins: [react(), tailwindcss()],
+    server: {
+      proxy: {
+        "/api": env.VITE_API_PROXY_TARGET || "http://localhost:3003",
+      },
+    },
+  };
 });

@@ -1,8 +1,8 @@
 # Bitcoin Node Dashboard
 
-Dark, live dashboard for a self-hosted Bitcoin node and its related services. By
-default, Docker Compose binds it to `127.0.0.1:3003` for local access. Configure
-the bind address and port in `.env` to allow access from other devices.
+Dark, live dashboard for a self-hosted Bitcoin node and its related services.
+The default local URL is `http://localhost:3003`. Set `DASHBOARD_BIND_ADDRESS`
+and `DASHBOARD_PORT` in `.env` to bind it to a trusted LAN interface.
 
 ## Live data
 
@@ -105,12 +105,14 @@ It reuses `homepage-dockerproxy:2375`; if Homepage's proxy is stopped, other dat
 sources continue and Docker metadata becomes unavailable. Start order is otherwise
 independent; missing upstream services recover on later polls.
 
-This dashboard does not provide a sign-in flow. Keep its bind address on loopback
-or a trusted private network. Do not expose it publicly without adding access controls.
+This dashboard does not provide a sign-in flow. Keep it on a trusted private
+network. Do not expose it publicly without adding access controls.
 
 Stack: React 19, TypeScript, Vite, Tailwind 4, shadcn-style Button, Radix Dialog,
 Lucide icons and Recharts; Python 3.13 collector; Nginx static frontend/API proxy.
-With Node 22, run `npm ci` and `npm run dev` (the Vite dev server proxies `/api` to the running LAN dashboard), or build with `npm run build`. Docker is self-contained.
+With Node 22, run `npm ci` and `npm run dev` (the Vite dev server proxies `/api`
+to `VITE_API_PROXY_TARGET`, which defaults to `http://localhost:3003`), or build
+with `npm run build`. Docker is self-contained.
 Collector tests: `python3 -m unittest discover -s backend -v`.
 
 Application version sources are checked daily (86,400 seconds) and immediately
