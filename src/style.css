@@ -1568,18 +1568,6 @@ main {
     font-size: 8px;
     line-height: 1.5;
   }
-  .nav-collapsed .sidebar {
-    width: 271px;
-  }
-  .nav-collapsed .sidebar span {
-    display: initial;
-  }
-  .nav-collapsed .nav-children {
-    display: block;
-  }
-  .nav-collapsed .brand {
-    visibility: visible;
-  }
 }
 @media (prefers-reduced-motion: reduce) {
   * {
@@ -1668,6 +1656,26 @@ main {
 @media (max-width: 560px) {
   .service-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Keep the phone drawer expanded even if the desktop sidebar was collapsed. */
+@media (max-width: 780px) {
+  .nav-collapsed .sidebar {
+    width: 271px;
+  }
+  .nav-collapsed .sidebar span {
+    display: initial;
+  }
+  .nav-collapsed .nav-children {
+    display: block;
+  }
+  .nav-collapsed .brand {
+    visibility: visible;
+  }
+  .nav-collapsed .sidebar-toggle {
+    right: 12px;
+    transform: none;
   }
 }
 .sidebar .nav-group {

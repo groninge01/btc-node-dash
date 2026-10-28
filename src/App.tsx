@@ -518,10 +518,16 @@ export default function App() {
         </a>
         <button
           className="sidebar-toggle"
-          aria-label="Collapse sidebar"
-          onClick={() => setCollapsed(!collapsed)}
+          aria-label={mobile ? "Close navigation" : collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          onClick={() => {
+            if (mobile) {
+              setMobile(false);
+            } else {
+              setCollapsed(!collapsed);
+            }
+          }}
         >
-          <ChevronsLeft size={20} />
+          {mobile ? <X size={20} /> : <ChevronsLeft size={20} />}
         </button>
         <nav>
           <button
@@ -586,7 +592,8 @@ export default function App() {
           <button
             className="mobile-menu"
             aria-label="Open navigation"
-            onClick={() => setMobile(true)}
+            aria-expanded={mobile}
+            onClick={() => setMobile(!mobile)}
           >
             <Menu />
           </button>
