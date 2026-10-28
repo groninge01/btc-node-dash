@@ -1899,6 +1899,10 @@ main {
 .card:nth-child(-n + 3) > header {
   flex: 0 0 51px;
 }
+.card:nth-child(1) {
+  display: flex;
+  flex-direction: column;
+}
 .card:nth-child(1) > .graph,
 .card:nth-child(2) > .lightning-channels,
 .card:nth-child(3) > .joinmarket-market {
