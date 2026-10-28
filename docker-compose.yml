@@ -1,0 +1,39 @@
+name: dashboard
+services:
+  dashboard:
+    build: .
+    ports:
+      - "192.168.88.44:3003:80"
+    restart: unless-stopped
+    depends_on:
+      - collector
+    networks:
+      - bitcoin
+  collector:
+    build: ./backend
+    environment:
+      POLL_SECONDS: "60"
+    restart: unless-stopped
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - ../bitcoin/bitcoin.conf:/run/bitcoin.conf:ro
+      - ../joinmarket/.env:/run/jam.env:ro
+      - ../lnd/data/tls.cert:/run/lnd/tls.cert:ro
+      - ../lnd/data/dashboard.macaroon:/run/lnd/dashboard.macaroon:ro
+      - /data/electrs:/electrs-db:ro
+      - ./state:/state
+    networks:
+      - bitcoin
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+networks:
+  bitcoin:
+    external: true
+    name: bitcoin
